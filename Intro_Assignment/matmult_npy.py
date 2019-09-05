@@ -14,6 +14,9 @@ def matmult_npy(arg_row1, arg_col1, arg_row2, arg_col2):
         print 'ERROR: expected two integer arguments.'
         return
     
+    #data = open('A.csv', 'r')
+    #reader = csv.reader(data)
+
 
     with open('A.csv', 'r') as csvfile:
         reader = csv.reader(csvfile)
@@ -21,12 +24,12 @@ def matmult_npy(arg_row1, arg_col1, arg_row2, arg_col2):
         
         #row_count = sum(1 for row in reader)
         #print row_count
-
         for line in reader:
             row_count += 1
-            col_count = len(line)
-
+        col_count = len(line)
         print row_count, col_count
+        csvfile.seek(0)
+        print csvfile.readlines()
     return
 
 
