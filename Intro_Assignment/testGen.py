@@ -19,15 +19,23 @@ def testGen(arg_row, arg_col):
     # Generates normally-distributed data.
     sol = np.random.standard_normal((row, col))
 
-    # Print the data in CSV format (getting rid of all the line changes and spaces).
-    for i in range(row):
-        for j in range(col):
-            print sol[i,j],; sys.stdout.softspace = False
-            if j != col-1:
+    # Print the data.
+    print2csv(sol)
+    
+    return
+    
+def print2csv(data):
+    """
+    Print the data in CSV format.
+    """
+    for i in range(len(data)):
+        for j in range(len(data[0])):
+            print data[i,j],; sys.stdout.softspace = False
+            if j != len(data[0])-1:
                 print ', ',; sys.stdout.softspace = False
         print '\n',; sys.stdout.softspace = False
     return
-    
+
 
 if __name__ == '__main__':
     # Read command line arguments as function input.

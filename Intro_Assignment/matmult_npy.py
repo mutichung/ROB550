@@ -2,37 +2,96 @@
 import numpy as np
 import sys
 import csv
+import time
 
 
-def matmult_npy(arg_row1, arg_col1, arg_row2, arg_col2):
+def utime_now():
+	return int(time.time()*1E6)
+
+class InArgError(Exception):
+    def __init__(self, i):
+        print 'ERROR: expected positive integer arguments - arg[', i, ']'
+        sys.exit()
+
+class MatDimError(Exception):
+    def __init__(self, i):
+        print 'MatDimError: Matrix dimensions did not match - arg[', i, ']'
+        sys.exit()
+
+def check_in_arg(arg, i, matdim):
     try:
-        row1 = int(arg_row1)
-        col1 = int(arg_col1)
-        row2 = int(arg_row2)
-        row2 = int(arg_col2)
+        in_dim = int(arg)
+        if in_dim <= 0:
+            raise InArgError(i)
+        elif in_dim != matdim:
+            raise MatDimError(i)
     except ValueError:
-        print 'ERROR: expected two integer arguments.'
-        return
-    
-    #data = open('A.csv', 'r')
-    #reader = csv.reader(data)
+        print 'ERROR: expected integer arguments - arg[', i, ']'
+        sys.exit()
 
-
-    with open('A.csv', 'r') as csvfile:
-        reader = csv.reader(csvfile)
-        row_count = col_count = 0
-        
-        #row_count = sum(1 for row in reader)
-        #print row_count
+def csv2mat(filename):
+    with open(filename, 'r') as csvfile:
+        reader = csv.reader(csvfile, quoting = csv.QUOTE_NONNUMERIC)
+        out = Matrix()
         for line in reader:
-            row_count += 1
-        col_count = len(line)
-        print row_count, col_count
-        csvfile.seek(0)
-        print csvfile.readlines()
+            out.mat.append(line)
+        out.row = len(out.mat)
+        out.col = len(out.mat[0])
+    return out
+
+def matmult(MatA, MatB):
+    if MatA.col != MatB.row:
+        raise MatDimError
+
+    MatC = Matrix()
+    for i in range(MatA.row):
+        ls_temp = []
+        for j in range(MatB.col):#max 2
+            ele = 0
+            for k in range(MatA.col):#
+                ele += MatA.mat[i][k] * MatB.mat[k][j]
+            ls_temp.append(ele)        
+        MatC.mat.append(ls_temp)
+    MatC.row = MatA.row
+    MatC.col = MatB.col
+
+    return MatC
+
+def print2csv(Mat):
+    """
+    Print the Mat in CSV format.
+    """
+    with open('C.csv', 'wb') as csvfile:
+        writer = csv.writer(csvfile)
+        for r in range(Mat.row):
+            for c in range(Mat.col):
+                Mat.mat[r][c] = str(Mat.mat[r][c])
+            writer.writerow(Mat.mat[r])
     return
 
+def main():
+    # tic
+    t_start = utime_now()
+    
+    # Reads CSV files.
+    MatA = csv2mat('A.csv')
+    MatB = csv2mat('B.csv')
 
+    # Check input arguments
+    check_in_arg(sys.argv[1], 1, MatA.row)
+    check_in_arg(sys.argv[2], 2, MatA.col)
+    check_in_arg(sys.argv[3], 3, MatB.row)
+    check_in_arg(sys.argv[4], 4, MatB.col)
+
+    # Calculates multiplication.
+    MatC = matmult(MatA, MatB)
+
+    # Prints to CSV.
+    print2csv(MatC)
+
+    # toc
+    t_end = utime_now()
+    print 'Time = ', t_end - t_start, ' microseconds.'
 
 if __name__ == '__main__':
-    matmult_npy(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    main()
