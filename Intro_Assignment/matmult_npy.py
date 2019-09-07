@@ -32,11 +32,12 @@ def check_in_arg(arg, i, matdim):
 def csv2mat(filename):
     with open(filename, 'r') as csvfile:
         reader = csv.reader(csvfile, quoting = csv.QUOTE_NONNUMERIC)
-        out = Matrix()
+        out = np.array()
         for line in reader:
-            out.mat.append(line)
-        out.row = len(out.mat)
-        out.col = len(out.mat[0])
+            
+            #out.mat.append(line)
+        #out.row = len(out.mat)
+        #out.col = len(out.mat[0])
     return out
 
 def matmult(MatA, MatB):
