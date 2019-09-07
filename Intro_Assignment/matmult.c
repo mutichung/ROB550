@@ -3,7 +3,7 @@
 
 double* readMatrixFromFile(char* fileName, int height, int width);
 int writeMatrixToFile(char* fileName, double* matrix, int height, int width);
-double** readCsv2Mat(char* fileName, int height, int width);
+struct Matrix matmult(struct Matrix matA, struct Matrix matB);
 
 struct Matrix {
     double** mat;
@@ -13,7 +13,7 @@ struct Matrix {
 
 
 int main(int argc, char** argv){
-    struct Matrix matA, matB;
+    struct Matrix matA, matB, matC;
     matA.r = atoi(argv[1]);
     matA.c = atoi(argv[2]);
     matB.r = atoi(argv[3]);
@@ -43,6 +43,16 @@ int main(int argc, char** argv){
         printf("\n");
     }
     free(arrB);
+    printf("\n");
+
+    matC = matmult(matA, matB);
+    for(int i = 0; i < matC.r; i++) {
+        for(int j = 0; j < matC.c; j++) {
+            printf("\t%.4f", matC.mat[i][j]);
+        }
+        printf("\n");
+    }
+    
 }
 
 /**
@@ -90,19 +100,25 @@ int writeMatrixToFile(char* fileName, double* matrix, int height, int width) {
     return 0;
 }
 
-double** readCsv2Mat(char* fileName, int height, int width) {
-    double* arr = readMatrixFromFile(fileName, height, width);
-
-    double **mat = (double **)malloc( sizeof(double *)*height*width );
-    for(int i = 0; i < height; i++) {
-        mat[i] = (double *)malloc( sizeof(double)*width );
-        for (int j = 0; j < width; j++) {
-            mat[i][j] = arr[i*width + j];
-            //printf("\t%.4f", mat[i][j]);
+struct Matrix matmult(struct Matrix matA, struct Matrix matB) {
+    struct Matrix out;
+    out.r = matA.r;
+    out.c = matB.c;
+    out.mat = (double**)malloc( sizeof(double*)*out.r*out.c );
+    for(int i = 0; i < out.r; i++) {
+        for(int j = 0; j < out.c; j++) {
+            out.mat[i] = (double*)malloc( sizeof(double)*out.c );
+            out.mat[i][j] = 0;
         }
-        //printf("\n");
     }
-    free(arr);
+
+    //TODO: check compatibility
+    for(int i = 0; i < matA.r; i++) {
+        for(int j = 0; j < matB.c; j++) {
+            for(int k = 0; k < matA.c; k++) out.mat[i][j] += matA.mat[i][k]*matB.mat[k][j];
+        }
+    }
+    return out;
 }
 
 /*
