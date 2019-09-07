@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
     matB = arr2Matrix(readMatrixFromFile("B.csv", rowB, colB), rowB, colB);
     matC = matmult(matA, matB);
     double* out = matrix2Arr(matC);
-    writeMatrixToFile("C_c.csv", out, matC.r, matC.c);
+    writeMatrixToFile("C.csv", out, matC.r, matC.c);
     
     t_end = clock();
     printf("Time = %.0ld\n", t_end - t_start);
