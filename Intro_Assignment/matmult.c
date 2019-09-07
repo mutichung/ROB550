@@ -35,10 +35,18 @@ int main(int argc, char** argv){
     double* arrB = readMatrixFromFile("B.csv", matB.r, matB.c);
     matB.mat = (double**)malloc( sizeof(double*)*matB.r*matB.c );
     for(int i = 0; i < matB.r; i++) {
+        matB.mat[i] = (double*)malloc( sizeof(double)*matB.c);
         for(int j = 0; j < matB.c; j++) {
-            matB.mat[i] = (double*)malloc( sizeof(double)*matB.c);
             matB.mat[i][j] = arrB[ i*matB.c + j];
             printf("\t%.4f", matB.mat[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\n\tMatrix B = \n");
+    for(int i = 0; i < matB.r; i++) {
+        for(int j = 0; j < matB.c; j++) {
+            printf("\t%.6f", matB.mat[i][j]);
         }
         printf("\n");
     }
@@ -115,22 +123,10 @@ struct Matrix matmult(struct Matrix matA, struct Matrix matB) {
     //TODO: check compatibility
     for(int i = 0; i < matA.r; i++) {
         for(int j = 0; j < matB.c; j++) {
-            for(int k = 0; k < matA.c; k++) out.mat[i][j] += matA.mat[i][k]*matB.mat[k][j];
+            for(int k = 0; k < matB.r; k++) {
+                out.mat[i][j] += matA.mat[i][k]*matB.mat[k][j];
+            }
         }
     }
     return out;
 }
-
-/*
-double** matmult(double** matA, double** matB) {
-    double** out;
-    for(int i = 0; i <= matA.row; i++) {
-        for(int j = 0; j <= matB.col; j++) {
-            double temp = 0;
-            for(int k = 0; k <= matA.col; k++) {
-                temp += matA.mat[i][k] * matB.mat[k][j];
-            }
-        }
-    }
-}
-*/
