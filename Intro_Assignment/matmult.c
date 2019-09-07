@@ -1,71 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-double* readMatrixFromFile(char* fileName, int height, int width);
-int writeMatrixToFile(char* fileName, double* matrix, int height, int width);
-struct Matrix matmult(struct Matrix matA, struct Matrix matB);
-
 struct Matrix {
     double** mat;
     int r;
     int c;
 };
+struct Matrix arr2Matrix(double* arr, int row, int col);
+double* readMatrixFromFile(char* fileName, int height, int width);
+int writeMatrixToFile(char* fileName, double* matrix, int height, int width);
+struct Matrix matmult(struct Matrix matA, struct Matrix matB);
+double* matrix2Arr(struct Matrix mat);
+
 
 
 int main(int argc, char** argv){
     struct Matrix matA, matB, matC;
-    matA.r = atoi(argv[1]);
-    matA.c = atoi(argv[2]);
-    matB.r = atoi(argv[3]);
-    matB.c = atoi(argv[4]);
-    
-    double* arrA = readMatrixFromFile("A.csv", matA.r, matA.c);
-    matA.mat = (double **)malloc( sizeof(double *)*matA.r*matA.c );
-    for(int i = 0; i < matA.r; i++) {
-        matA.mat[i] = (double *)malloc( sizeof(double)*matA.c );
-        for(int j = 0; j < matA.c; j++) {
-            matA.mat[i][j] = arrA[i*matA.c + j];
-            printf("\t%.4f", matA.mat[i][j]);
-        }
-        printf("\n");
-    }
-    free(arrA);
-    printf("\n");
+    int rowA = atoi(argv[1]);
+    int colA = atoi(argv[2]);
+    int rowB = atoi(argv[3]);
+    int colB = atoi(argv[4]);
 
-    double* arrB = readMatrixFromFile("B.csv", matB.r, matB.c);
-    matB.mat = (double**)malloc( sizeof(double*)*matB.r*matB.c );
-    for(int i = 0; i < matB.r; i++) {
-        matB.mat[i] = (double*)malloc( sizeof(double)*matB.c);
-        for(int j = 0; j < matB.c; j++) {
-            matB.mat[i][j] = arrB[ i*matB.c + j];
-            printf("\t%.4f", matB.mat[i][j]);
-        }
-        printf("\n");
-    }
-
-    printf("\n\tMatrix B = \n");
-    for(int i = 0; i < matB.r; i++) {
-        for(int j = 0; j < matB.c; j++) {
-            printf("\t%.6f", matB.mat[i][j]);
-        }
-        printf("\n");
-    }
-    free(arrB);
-    printf("\n");
-
+    matA = arr2Matrix(readMatrixFromFile("A.csv", rowA, colA), rowA, colA);
+    matB = arr2Matrix(readMatrixFromFile("B.csv", rowB, colB), rowB, colB);
     matC = matmult(matA, matB);
-    for(int i = 0; i < matC.r; i++) {
-        for(int j = 0; j < matC.c; j++) {
-            printf("\t%.4f", matC.mat[i][j]);
-        }
-        printf("\n");
-    }
+    double* out = matrix2Arr(matC);
+    writeMatrixToFile("C_c.csv", out, matC.r, matC.c);
     
+    return 0;
 }
 
-/**
- * Allocates a matrix which must be free'd by the calling free()
- */
+
 double* readMatrixFromFile(char* fileName, int height, int width) {
     FILE* fp = fopen(fileName, "r");
     if (fp == NULL) {
@@ -129,4 +94,28 @@ struct Matrix matmult(struct Matrix matA, struct Matrix matB) {
         }
     }
     return out;
+}
+
+double* matrix2Arr(struct Matrix mat) {
+    double* arr;
+    arr = (double*)malloc(sizeof(double)*mat.r*mat.c);
+    for(int i = 0; i < mat.r*mat.c; i++) {
+        arr[i] = mat.mat[i/mat.c][i%mat.c];
+    }
+    return arr;
+}
+
+struct Matrix arr2Matrix(double* arr, int row, int col) {
+    struct Matrix mat;
+    mat.r = row;
+    mat.c = col;
+    mat.mat = (double **)malloc( sizeof(double *)*row*col );
+    for(int i = 0; i < row; i++) {
+        mat.mat[i] = (double *)malloc( sizeof(double)*col );
+        for(int j = 0; j < col; j++) {
+            mat.mat[i][j] = arr[i*col + j];
+        }
+    }
+    free(arr);
+    return mat;
 }
