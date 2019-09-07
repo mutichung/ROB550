@@ -3,29 +3,46 @@
 
 double* readMatrixFromFile(char* fileName, int height, int width);
 int writeMatrixToFile(char* fileName, double* matrix, int height, int width);
+double** readCsv2Mat(char* fileName, int height, int width);
 
+struct Matrix {
+    double** mat;
+    int r;
+    int c;
+};
 
 
 int main(int argc, char** argv){
-    int rowA = atoi(argv[1]);
-    int colA = atoi(argv[2]);
-    int rowB = atoi(argv[3]);
-    int colB = atoi(argv[4]);
+    struct Matrix matA, matB;
+    matA.r = atoi(argv[1]);
+    matA.c = atoi(argv[2]);
+    matB.r = atoi(argv[3]);
+    matB.c = atoi(argv[4]);
     
-    double* arrA = readMatrixFromFile("A.csv", rowA, colA);
-    double* arrB = readMatrixFromFile("B.csv", rowB, colB);
-    double** test[rowA][colA];
-    printf("%ld\n\n", sizeof(test)/sizeof(test[0][0]));
-
-    for(int i = 0; i < rowA; i++) {
-        for(int j = 0; j < colA; j++) {
-
+    double* arrA = readMatrixFromFile("A.csv", matA.r, matA.c);
+    matA.mat = (double **)malloc( sizeof(double *)*matA.r*matA.c );
+    for(int i = 0; i < matA.r; i++) {
+        matA.mat[i] = (double *)malloc( sizeof(double)*matA.c );
+        for(int j = 0; j < matA.c; j++) {
+            matA.mat[i][j] = arrA[i*matA.c + j];
+            printf("\t%.4f", matA.mat[i][j]);
         }
-        printf("%f\n", arrA[i]); 
+        printf("\n");
     }
+    free(arrA);
+    printf("\n");
 
-    printf("%d %d %d %d\n", rowA, colA, rowB, colB);
-    
+    double* arrB = readMatrixFromFile("B.csv", matB.r, matB.c);
+    matB.mat = (double**)malloc( sizeof(double*)*matB.r*matB.c );
+    for(int i = 0; i < matB.r; i++) {
+        for(int j = 0; j < matB.c; j++) {
+            matB.mat[i] = (double*)malloc( sizeof(double)*matB.c);
+            matB.mat[i][j] = arrB[ i*matB.c + j];
+            printf("\t%.4f", matB.mat[i][j]);
+        }
+        printf("\n");
+    }
+    free(arrB);
 }
 
 /**
@@ -53,7 +70,7 @@ double* readMatrixFromFile(char* fileName, int height, int width) {
     fclose(fp);
     return M;
 }
-/*
+
 int writeMatrixToFile(char* fileName, double* matrix, int height, int width) {
     FILE* fp = fopen(fileName, "w");
     if (fp == NULL) {
@@ -72,7 +89,24 @@ int writeMatrixToFile(char* fileName, double* matrix, int height, int width) {
     fclose(fp);
     return 0;
 }
-double** matmilt(double** matA, double** matB) {
+
+double** readCsv2Mat(char* fileName, int height, int width) {
+    double* arr = readMatrixFromFile(fileName, height, width);
+
+    double **mat = (double **)malloc( sizeof(double *)*height*width );
+    for(int i = 0; i < height; i++) {
+        mat[i] = (double *)malloc( sizeof(double)*width );
+        for (int j = 0; j < width; j++) {
+            mat[i][j] = arr[i*width + j];
+            //printf("\t%.4f", mat[i][j]);
+        }
+        //printf("\n");
+    }
+    free(arr);
+}
+
+/*
+double** matmult(double** matA, double** matB) {
     double** out;
     for(int i = 0; i <= matA.row; i++) {
         for(int j = 0; j <= matB.col; j++) {
