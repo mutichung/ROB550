@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 struct Matrix {
     double** mat;
@@ -14,7 +15,10 @@ double* matrix2Arr(struct Matrix mat);
 
 
 
-int main(int argc, char** argv){
+int main(int argc, char** argv) {
+    clock_t t_start, t_end;
+    t_start = clock();
+
     struct Matrix matA, matB, matC;
     int rowA = atoi(argv[1]);
     int colA = atoi(argv[2]);
@@ -27,6 +31,8 @@ int main(int argc, char** argv){
     double* out = matrix2Arr(matC);
     writeMatrixToFile("C_c.csv", out, matC.r, matC.c);
     
+    t_end = clock();
+    printf("Time = %.0ld\n", t_end - t_start);
     return 0;
 }
 
