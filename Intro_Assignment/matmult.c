@@ -3,25 +3,28 @@
 
 double* readMatrixFromFile(char* fileName, int height, int width);
 int writeMatrixToFile(char* fileName, double* matrix, int height, int width);
-struct Matrix {
-    double** mat;
-    int row;
-    int col;
-};
 
 
 
 int main(int argc, char** argv){
-    double* arrA = readMatrixFromFile("A.csv", 3, 2);
-    double* arrB = readMatrixFromFile("B.csv", 2, 2);
+    int rowA = atoi(argv[1]);
+    int colA = atoi(argv[2]);
+    int rowB = atoi(argv[3]);
+    int colB = atoi(argv[4]);
+    
+    double* arrA = readMatrixFromFile("A.csv", rowA, colA);
+    double* arrB = readMatrixFromFile("B.csv", rowB, colB);
+    double** test[rowA][colA];
+    printf("%ld\n\n", sizeof(test)/sizeof(test[0][0]));
 
-    struct Matrix matA, matB, matC;
+    for(int i = 0; i < rowA; i++) {
+        for(int j = 0; j < colA; j++) {
 
-    for(int i = 0; i <= 2; i++){
+        }
         printf("%f\n", arrA[i]); 
     }
 
-    printf("%s\n", argv[1]);
+    printf("%d %d %d %d\n", rowA, colA, rowB, colB);
     
 }
 
