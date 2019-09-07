@@ -12,12 +12,14 @@ double* readMatrixFromFile(char* fileName, int height, int width);
 int writeMatrixToFile(char* fileName, double* matrix, int height, int width);
 struct Matrix matmult(struct Matrix matA, struct Matrix matB);
 double* matrix2Arr(struct Matrix mat);
-
+void dimCheck(char** argv);
 
 
 int main(int argc, char** argv) {
     clock_t t_start, t_end;
     t_start = clock();
+
+    dimCheck(argv);
 
     struct Matrix matA, matB, matC;
     int rowA = atoi(argv[1]);
@@ -91,7 +93,6 @@ struct Matrix matmult(struct Matrix matA, struct Matrix matB) {
         }
     }
 
-    //TODO: check compatibility
     for(int i = 0; i < matA.r; i++) {
         for(int j = 0; j < matB.c; j++) {
             for(int k = 0; k < matB.r; k++) {
@@ -124,4 +125,19 @@ struct Matrix arr2Matrix(double* arr, int row, int col) {
     }
     free(arr);
     return mat;
+}
+
+void dimCheck(char** argv) {
+    int dim[4];
+    for(int i = 0; i < 4; i++) {
+        dim[i] = atoi(argv[i+1]);
+        if( dim[i] <= 0) {
+            fprintf(stderr, "InputArgError: expected positive integers - argv[%d]\n", i+1);
+            exit(EXIT_FAILURE);
+        }
+    }
+    if( dim[1] != dim[2]) {
+        printf("MatDimError: Matrix dimensions did not match.\n");
+        exit(EXIT_FAILURE);
+    }
 }
