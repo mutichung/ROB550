@@ -29,12 +29,14 @@ int main(int argc, char** argv) {
 
     matA = arr2Matrix(readMatrixFromFile("A.csv", rowA, colA), rowA, colA);
     matB = arr2Matrix(readMatrixFromFile("B.csv", rowB, colB), rowB, colB);
+
     matC = matmult(matA, matB);
     double* out = matrix2Arr(matC);
+
     writeMatrixToFile("C.csv", out, matC.r, matC.c);
     
     t_end = clock();
-    printf("Time = %.0ld\n", t_end - t_start);
+    printf("Time = %.0ld microseconds.\n", t_end - t_start);
     return 0;
 }
 

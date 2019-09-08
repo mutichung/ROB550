@@ -4,7 +4,6 @@ import sys
 import csv
 import time
 
-
 def utime_now():
 	return int(time.time()*1E6)
 
@@ -18,16 +17,15 @@ class MatDimError(Exception):
         print 'MatDimError: Matrix dimensions did not match - arg[', i, ']'
         sys.exit()
 
-def check_in_arg(arg, i, matdim):
+def check_in_arg(arg, i):
     try:
         in_dim = int(arg)
         if in_dim <= 0:
             raise InArgError(i)
-        elif in_dim != matdim:
-            raise MatDimError(i)
     except ValueError:
         print 'ERROR: expected integer arguments - arg[', i, ']'
         sys.exit()
+    return in_dim
 
 def csv2mat(filename, r, c):
     with open(filename, 'r') as csvfile:
@@ -37,62 +35,47 @@ def csv2mat(filename, r, c):
         for line in reader:
             out[row] = line
             row += 1
-    return out
+    return [out, row]
 
-def matmult(MatA, MatB):
-    if MatA.col != MatB.row:
-        raise MatDimError                       #TODO
-
-    MatC = np.array
-    for i in range(MatA.row):
-        ls_temp = []
-        for j in range(MatB.col):#max 2
-            ele = 0
-            for k in range(MatA.col):#
-                ele += MatA.mat[i][k] * MatB.mat[k][j]
-            ls_temp.append(ele)        
-        MatC.mat.append(ls_temp)
-    MatC.row = MatA.row
-    MatC.col = MatB.col
-
-    return MatC
-
-def print2csv(Mat):
+def print2csv(Mat, row, col):
     """
     Print the Mat in CSV format.
     """
     with open('C.csv', 'wb') as csvfile:
         writer = csv.writer(csvfile)
-        for r in range(Mat.row):
-            for c in range(Mat.col):
-                Mat.mat[r][c] = str(Mat.mat[r][c])
-            writer.writerow(Mat.mat[r])
+        for r in range(row):
+            for c in range(col):
+                Mat[r][c] = str(Mat[r][c])
+            writer.writerow(Mat[r])
     return
 
 def main():
     # tic
     t_start = utime_now()
+
+    # Reads arguments and checks.
+    rowA = check_in_arg(sys.argv[1], 1)
+    colA = check_in_arg(sys.argv[2], 2)
+    rowB = check_in_arg(sys.argv[3], 3)
+    colB = check_in_arg(sys.argv[4], 4)
     
     # Reads CSV files.
-    MatA = csv2mat('A.csv', int(sys.argv[1]), int(sys.argv[2]))
-    print MatA
-    #MatB = csv2mat('B.csv')
+    [MatA, rowA] = csv2mat('A.csv', rowA, colA)
+    [MatB, rowB] = csv2mat('B.csv', rowB, colB)
 
-    # Check input arguments
-    #check_in_arg(sys.argv[1], 1, MatA.row)
-    #check_in_arg(sys.argv[2], 2, MatA.col)
-    #check_in_arg(sys.argv[3], 3, MatB.row)
-    #check_in_arg(sys.argv[4], 4, MatB.col)
-#
-    ## Calculates multiplication.
-    #MatC = matmult(MatA, MatB)
-#
-    ## Prints to CSV.
-    #print2csv(MatC)
-#
-    ## toc
-    #t_end = utime_now()
-    #print 'Time = ', t_end - t_start, ' microseconds.'
+    # Calculates multiplication.
+    try:
+        MatC = np.matmul(MatA, MatB)
+    except ValueError:
+        print "DimError: Matrix dimensions did not match."
+        sys.exit()
+    
+    # Prints to CSV.
+    print2csv(MatC, MatC.shape[0], MatC.shape[1])
+
+    # toc
+    t_end = utime_now()
+    print 'Time = ', t_end - t_start, ' microseconds.'
 
 if __name__ == '__main__':
     main()
