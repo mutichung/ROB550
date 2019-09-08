@@ -29,22 +29,21 @@ def check_in_arg(arg, i, matdim):
         print 'ERROR: expected integer arguments - arg[', i, ']'
         sys.exit()
 
-def csv2mat(filename):
+def csv2mat(filename, r, c):
     with open(filename, 'r') as csvfile:
         reader = csv.reader(csvfile, quoting = csv.QUOTE_NONNUMERIC)
-        out = np.array()
+        row = 0
+        out = np.zeros([r,c])
         for line in reader:
-            
-            #out.mat.append(line)
-        #out.row = len(out.mat)
-        #out.col = len(out.mat[0])
+            out[row] = line
+            row += 1
     return out
 
 def matmult(MatA, MatB):
     if MatA.col != MatB.row:
-        raise MatDimError
+        raise MatDimError                       #TODO
 
-    MatC = Matrix()
+    MatC = np.array
     for i in range(MatA.row):
         ls_temp = []
         for j in range(MatB.col):#max 2
@@ -75,24 +74,25 @@ def main():
     t_start = utime_now()
     
     # Reads CSV files.
-    MatA = csv2mat('A.csv')
-    MatB = csv2mat('B.csv')
+    MatA = csv2mat('A.csv', int(sys.argv[1]), int(sys.argv[2]))
+    print MatA
+    #MatB = csv2mat('B.csv')
 
     # Check input arguments
-    check_in_arg(sys.argv[1], 1, MatA.row)
-    check_in_arg(sys.argv[2], 2, MatA.col)
-    check_in_arg(sys.argv[3], 3, MatB.row)
-    check_in_arg(sys.argv[4], 4, MatB.col)
-
-    # Calculates multiplication.
-    MatC = matmult(MatA, MatB)
-
-    # Prints to CSV.
-    print2csv(MatC)
-
-    # toc
-    t_end = utime_now()
-    print 'Time = ', t_end - t_start, ' microseconds.'
+    #check_in_arg(sys.argv[1], 1, MatA.row)
+    #check_in_arg(sys.argv[2], 2, MatA.col)
+    #check_in_arg(sys.argv[3], 3, MatB.row)
+    #check_in_arg(sys.argv[4], 4, MatB.col)
+#
+    ## Calculates multiplication.
+    #MatC = matmult(MatA, MatB)
+#
+    ## Prints to CSV.
+    #print2csv(MatC)
+#
+    ## toc
+    #t_end = utime_now()
+    #print 'Time = ', t_end - t_start, ' microseconds.'
 
 if __name__ == '__main__':
     main()
