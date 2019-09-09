@@ -24,8 +24,8 @@ Part A. Clock starts from the beginning of the code and ends at the end of the c
 
 ==========================================================================================
 
-Part B. Clock starts just before the matmult() function and ends as soon as it's finished, 
-        i.e., does not include reading and writing csv files.
+Part B. Clock starts just before the multiplication process and ends as soon as it's 
+        finished, i.e., does not include reading and writing csv files.
 
     1. For A and B are 10x10 matrices:
         - matmult.c:            0.029 millisec
@@ -46,4 +46,11 @@ Part B. Clock starts just before the matmult() function and ends as soon as it's
 ==========================================================================================
 
 Comments:
-    1. 
+
+It is obvious to observe that when comparing the speed, npy > c > pure python. C
+language is usually known to process faster than other languages such as python. 
+Nevertheless, it seems that the speed of matmul() in python has been greatly 
+optimized, with its outstanding performance on processing multiplication between
+matrices with big sizes. On the other hand, maybe becuase of my poor programming
+skill, matmult.c and matmult_pure.py both took a lot of time on calculating
+matrices multiplication. There is a significant difference in the 1000x1000 case.
